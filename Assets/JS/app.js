@@ -1,5 +1,7 @@
 let currentUser = null;
 let users = JSON.parse(localStorage.getItem('users')) || [];
+let loginAttempts = 0;
+
 
 function saveDataToStorage() {
     localStorage.setItem('users', JSON.stringify(users));
@@ -12,7 +14,6 @@ function getUserByUsername(username) {
 function showSuccessAlert(message) {
     Swal.fire({
         icon: 'success',
-        title: 'Éxito',
         text: message,
         customClass: {
             popup: 'swal2-popup',
@@ -32,19 +33,49 @@ function showErrorAlert(message) {
 }
 
 function loginUser(username, password) {
-    const user = users.find(user => user.username === username && user.password === password);
-    if (user) {
-        currentUser = user;
-        showDashboard();
-    } else {
-        const existingUser = getUserByUsername(username);
-        if (existingUser) {
-            showErrorAlert("Contraseña incorrecta. Por favor, inténtelo de nuevo.");
+    if (loginAttempts < 3) {
+        const user = users.find(user => user.username === username && user.password === password);
+        if (user) {
+            currentUser = user;
+            showDashboard();
         } else {
-            showErrorAlert("Usuario no registrado. Por favor, regístrese antes de iniciar sesión.");
+            loginAttempts++;
+            if (loginAttempts === 3) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: "Se han excedido los intentos de inicio de sesión. El formulario ha sido bloqueado.",
+                    customClass: {
+                        popup: 'swal2-popup',
+                    },
+                });
+                
+                disableLoginForm();  // Función para bloquear el formulario
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: `Contraseña incorrecta. Intento ${loginAttempts}/3. Por favor, inténtelo de nuevo.`,
+                    customClass: {
+                        popup: 'swal2-popup',
+                    },
+                });
+            }
         }
     }
 }
+function disableLoginForm() {
+    const loginForm = document.getElementById('loginForm');
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const submitButton = document.querySelector('#loginForm button');
+
+    loginForm.reset();  // Limpiar los campos del formulario
+    usernameInput.disabled = true;
+    passwordInput.disabled = true;
+    submitButton.disabled = true;
+}
+
 
 function registerUser(username, password, confirmPassword) {
     if (password === confirmPassword) {
@@ -147,28 +178,38 @@ function logout() {
 function showLoginForm() {
     const mainContainer = document.getElementById('main-container');
     mainContainer.innerHTML = `
-        <form id="loginForm">
-            <label for="username">Usuario:</label>
-            <input type="text" id="username" required>
-            <label for="password">Contraseña:</label>
-            <input type="password" id="password" required>
-            <button type="button" onclick="submitLoginForm()">Iniciar Sesión</button>
-        </form>
-        <p>¿No tienes una cuenta? <a href="#" onclick="showRegistrationForm()">Regístrate</a></p>
+    <form id="loginForm" class="mx-auto m-4 my-4" style="max-width: 400px;">
+    <div class="mb-3">
+        <label for="username" class="form-label">Usuario:</label>
+        <input type="text" class="form-control" id="username" required>
+    </div>
+    <div class="mb-3">
+        <label for="password" class="form-label">Contraseña:</label>
+        <input type="password" class="form-control" id="password" required>
+    </div>
+    <button type="button" class="btn btn-primary" onclick="submitLoginForm()">Iniciar Sesión</button>
+</form>
+<p>¿No tienes una cuenta? <a href="#" onclick="showRegistrationForm()">Regístrate</a></p>
     `;
 }
 
 function showRegistrationForm() {
     const mainContainer = document.getElementById('main-container');
     mainContainer.innerHTML = `
-        <form id="registrationForm">
-            <label for="newUsername">Nuevo Usuario:</label>
-            <input type="text" id="newUsername" required>
-            <label for="newPassword">Contraseña:</label>
-            <input type="password" id="newPassword" required>
-            <label for="confirmPassword">Confirmar Contraseña:</label>
-            <input type="password" id="confirmPassword" required>
-            <button type="button" onclick="submitRegistrationForm()">Registrarse y Abrir Cuenta</button>
+        <form id="registrationForm" class="mx-auto m-4 my-4" style="max-width: 400px;">
+        <div class="mb-3">
+            <label class="form-label" for="newUsername">Nuevo Usuario:</label>
+            <input class="form-control" type="text" id="newUsername" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="newPassword">Contraseña:</label>
+            <input class="form-control" type="password" id="newPassword" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label"for="confirmPassword">Confirmar Contraseña:</label>
+            <input class="form-control" type="password" id="confirmPassword" required>
+        </div>
+            <button class="btn btn-primary" type="button" onclick="submitRegistrationForm()">Registrarse y Abrir Cuenta</button>
         </form>
         <p>¿Ya tienes una cuenta? <a href="#" onclick="showLoginForm()">Iniciar Sesión</a></p>
     `;
@@ -192,12 +233,12 @@ function showDashboard() {
     mainContainer.innerHTML = `
         <h2>Bienvenido, ${currentUser.username}!</h2>
         <p>Saldo actual: $${currentUser.accountBalance}</p>
-        <button onclick="checkBalance()">Consultar Saldo</button>
-        <button onclick="withdraw()">Retirar Dinero</button>
-        <button onclick="transfer()">Transferir Dinero</button>
-        <button onclick="deposit()">Consignar Dinero</button>
-        <button onclick="viewHistory()">Ver Historial</button>
-        <button onclick="logout()">Cerrar Sesión</button>
+        <button class="btn btn-info" onclick="checkBalance()">Consultar Saldo</button>
+        <button class="btn btn-primary" onclick="withdraw()">Retirar Dinero</button>
+        <button class="btn btn-primary" onclick="transfer()">Transferir Dinero</button>
+        <button class="btn btn-primary" onclick="deposit()">Consignar Dinero</button>
+        <button class="btn btn-info" onclick="viewHistory()">Ver Historial</button>
+        <button class="btn btn-danger" onclick="logout()">Cerrar Sesión</button>
     `;
 }
 
