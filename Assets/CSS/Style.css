@@ -1,0 +1,97 @@
+/* Reset de estilos para eliminar márgenes y rellenos predeterminados */
+body, h1, h2, p, img {
+    margin: 0;
+    padding: 0;
+}
+
+/* Estilos generales */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #080B53; /* Fondo azul oscuro sólido */
+    color: #FFFFFF; /* Texto blanco */
+}
+
+header {
+    background-color: #080B53; /* Fondo azul oscuro sólido para el encabezado */
+    color: #FFFFFF; /* Texto blanco en el encabezado */
+    text-align: center;
+    padding: 20px;
+}
+
+header h1 {
+    margin-bottom: 10px;
+    color: #ffffff; /* Rosa intenso para el título principal */
+}
+
+header img {
+    max-width: 100%;
+    height: auto;
+}
+
+#main-container {
+    padding: 20px;
+}
+
+footer {
+    text-align: center;
+    padding: 10px;
+    background-color: #080B53; /* Fondo azul oscuro sólido para el pie de página */
+    color: #FFFFFF; /* Texto blanco en el pie de página */
+}
+
+/* Estilos para enlaces */
+a {
+    color: #EA2088; /* Rosa intenso para los enlaces */
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Estilos para hacer la página responsive */
+@media screen and (max-width: 600px) {
+    header {
+        padding: 10px;
+    }
+
+    #main-container {
+        padding: 10px;
+    }
+}
+
+
+/* Ajustes específicos para el formulario */
+.form-container {
+    max-width: 400px; /* Ajusta el ancho según sea necesario */
+    width: 100%;
+    padding: 20px;
+    background-color: #FFFFFF; /* Fondo blanco para el formulario */
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#logo{
+   max-width: 100px; 
+   height: auto; 
+   margin-right: 10px;
+}
+
+.swal2-popup {
+    font-size: 1rem;  /* Ajusta el tamaño de fuente según tus preferencias */
+}
+.divider:after,
+.divider:before {
+content: "";
+flex: 1;
+height: 1px;
+background: #eee;
+}
+.h-custom {
+height: calc(100% - 73px);
+}
+@media (max-width: 450px) {
+.h-custom {
+height: 100%;
+}
+}
